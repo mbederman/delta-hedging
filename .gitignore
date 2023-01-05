@@ -2,3 +2,4 @@ env/
 log.txt
 __pycache__/
 .env
+delta_hedging_*.png

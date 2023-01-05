@@ -24,8 +24,7 @@ class Hedge_Manager:
         self.first = True
 
         # Logging in to robinhood
-        totp = pyotp.TOTP(os.getenv("RB_OTP")).now()
-        login = rs.login(os.getenv("RB_USERNAME"), os.getenv("RB_PASSWORD"), mfa_code=totp)
+        self.robinhood_login()
 
         # Keeping track of data
         self.stock_prices = []
@@ -35,10 +34,19 @@ class Hedge_Manager:
         # Keep track of start time
         self.start_time = datetime.now()
 
+        # Creating header for log file
+        self.log_header()
+
+        # Initializes plot
+        self.create_plot()
+
+    def log_header(self):
         with open("log.txt", "w") as file:
             file.write(f"Delta Hedging {TICKER} starting at {datetime.now()}:\n\n")
 
-        self.create_plot()
+    def robinhood_login(self):
+        totp = pyotp.TOTP(os.getenv("RB_OTP")).now()
+        rs.login(os.getenv("RB_USERNAME"), os.getenv("RB_PASSWORD"), mfa_code=totp)
 
     def run(self):
         for epoch in range(EPOCHS):
@@ -53,8 +61,9 @@ class Hedge_Manager:
             self.update_plot(epoch)
             sleep(T_INT)
         
-        self.hold_plot()
         self.summarize()
+        self.save_plot()
+        self.hold_plot()
 
     def get_stock_price(self):
         stock_price = float(rs.stocks.get_latest_price(TICKER)[0])
@@ -136,6 +145,9 @@ class Hedge_Manager:
     def hold_plot(self):
         plt.ioff()
         plt.show()
+    
+    def save_plot(self):
+        plt.savefig(f"delta_hedging_{TICKER.lower()}.png", dpi=200)
 
     def summarize(self):
         end_time = datetime.now()
