@@ -11,4 +11,4 @@
 ### Need RB_USERNAME, RB_PASSWORD, and RB_OTP ENV variables
 #### RB_USERNAME - robinhood username
 #### RB_PASSWORD - robinhood password
-#### RB_OTP - robinhood one time password used to set up authenticators (see robin_stocks documentation for more explanation)
+#### RB_OTP - robinhood one time password used to set up authenticators (see robin_stocks documentation for more explanation: https://readthedocs.org/projects/robin-stocks/downloads/pdf/latest/)
