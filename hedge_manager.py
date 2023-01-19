@@ -9,6 +9,8 @@ from datetime import datetime
 import os
 
 class Hedge_Manager:
+    """Overall manager class that adjusts portfolio weights to delta hedge based on update stock and options data from robinhood.
+       Starts with 1 call and buys/sells stock and risk free assets to have 0 inital total wealth."""
     def __init__(self):
         # Starting with initial call to hedge
         self.call_weight = 1
@@ -41,14 +43,17 @@ class Hedge_Manager:
         self.create_plot()
 
     def log_header(self):
+        """Creates header for log file"""
         with open("log.txt", "w") as file:
             file.write(f"Delta Hedging {TICKER} starting at {datetime.now()}:\n\n")
 
     def robinhood_login(self):
+        """Logs into robinhood via robin_stocks api. Uses ENV variables RB_OTP, RB_USERNAME, and RB_PASSWORD."""
         totp = pyotp.TOTP(os.getenv("RB_OTP")).now()
         rs.login(os.getenv("RB_USERNAME"), os.getenv("RB_PASSWORD"), mfa_code=totp)
 
     def run(self):
+        """Starts main hedging loop and then plots results"""
         for epoch in range(EPOCHS):
             stock_price = self.get_stock_price()
             try:
@@ -66,11 +71,13 @@ class Hedge_Manager:
         self.hold_plot()
 
     def get_stock_price(self):
+        """Gets current stock price from robinhood and rounds to nearest hundreth"""
         stock_price = float(rs.stocks.get_latest_price(TICKER)[0])
         self.stock_prices.append(round(stock_price, 2))
         return stock_price
 
     def adjust_weights(self, stock_price, option_price, delta):
+        """Adjusts risk free and stock weights in order to make portfolio delta 0."""
         if self.first:
             current_value = 0
             self.first = False
@@ -91,11 +98,13 @@ class Hedge_Manager:
         self.log_portfolio()
             
     def log_portfolio(self):
+        """Logs the current state of the portfolio"""
         with open("log.txt", "a") as file:
                 file.write(f"({datetime.now()}) Current Portfolio: {self.stock_weight} shares of {TICKER}, {self.risk_free_weight} risk free assets, {self.call_weight} of call option\n")
                 file.write(f"Total Portfolio Value: {self.portfolio_value}\n")
 
     def get_option_data(self):
+        """Returns options price and delta from robinhood"""
         data = rs.options.get_option_market_data(TICKER, EXP_DATE, STRIKE, optionType="call")[0][0]
         option_price = float(data["adjusted_mark_price"]) * 100
         delta = float(data["delta"])
@@ -105,6 +114,7 @@ class Hedge_Manager:
         return (option_price, delta)
 
     def log_trades(self, new_stock_weight, new_risk_free_rate, stock_price):
+        """Logs if stock or risk free assets are bought or sold."""
         current_time = datetime.now()
         with open("log.txt", "a") as file:
             if not new_stock_weight == self.stock_weight:
@@ -124,6 +134,7 @@ class Hedge_Manager:
                 file.write(f"({current_time}) {action} {new_risk_free_rate - self.risk_free_weight} risk free assets\n")
 
     def create_plot(self):
+        """Initializes plots for the stock price, option price, and total portfolio value at each epoch."""
         plt.ion()
         fig, self.axes = plt.subplots(1, 3, figsize=(20, 5))
         plt.suptitle("Delta Hedging")
@@ -136,6 +147,7 @@ class Hedge_Manager:
 
 
     def update_plot(self, epoch):
+        """Updates each plot with new data recieved from robinhood."""
         time = range(epoch + 1)
         self.axes[0].plot(time, self.stock_prices, linestyle="--", marker="o", color="r")
         self.axes[1].plot(time, self.option_prices, linestyle="--", marker="o", color="g")
@@ -143,13 +155,16 @@ class Hedge_Manager:
         plt.pause(.00001)
 
     def hold_plot(self):
+        """Holds plot so it doesn't disappear at termination."""
         plt.ioff()
         plt.show()
     
     def save_plot(self):
+        """Saves plot to delta_hedging_TICKER.png"""
         plt.savefig(f"delta_hedging_{TICKER.lower()}.png", dpi=200)
 
     def summarize(self):
+        """Logs a summary of the end results of the portfolio hedging after all epochs."""
         end_time = datetime.now()
         elapsed_time = end_time - self.start_time
 
