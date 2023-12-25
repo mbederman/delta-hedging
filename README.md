@@ -20,7 +20,7 @@ git clone https://github.com/mbederman/delta-hedging.git
 
 In order use this model, the `robin_stocks` api must be configured properly. This program does this through env variables which need to be set. 
 
-```bash
+```
 RB_USERNAME: robinhood username
 RB_PASSWORD: robinhood password
 RB_OTP: robinhood one time password used to set up authenticators 
