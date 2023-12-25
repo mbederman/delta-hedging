@@ -2,7 +2,7 @@
 
 ## Description:
 
-This project models a delta-neutral portfolio for one call for a given stock and strike price. This means that is attempts to make the whole portfolio's [delta](https://www.merrilledge.com/investment-products/options/learn-understand-delta-options) neutral, essentially offseting the change in price of the option with the change in price of the stock. This means that the portfolio should theoretically be resistant to changes in the stock price. However, factors like volatility, volume, etc. should still cause the portfolio's overall value to change. The portfolio will start at a value of 0, meaning it must buy/sell risk-free assets in order to counteract the costs of the call and stocks. This model utlizies the `robin_stocks` api to get stock and option data from robinhood. 
+This project models a delta-neutral portfolio for one call for a given stock and strike price. This means that is attempts to make the whole portfolio [delta](https://www.merrilledge.com/investment-products/options/learn-understand-delta-options) neutral, essentially offseting the change in price of the option with the change in price of the stock. This means that the portfolio should theoretically be resistant to changes in the stock price. However, factors like volatility, volume, etc. should still cause the portfolio's overall value to change. The portfolio will start at a value of 0, meaning it must buy/sell risk-free assets in order to counteract the costs of the call and stocks. This model utlizies the `robin_stocks` api to get stock and option data from Robinhood. 
 
 ## Features
 - Modeling of Delta-Neutral portfolio containing stocks, a call, and risk-free assets
