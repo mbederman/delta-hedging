@@ -26,7 +26,7 @@ RB_PASSWORD: robinhood password
 RB_OTP: robinhood one time password used to set up authenticators 
 ```
 
-In order to set up a one time password for `RB_OTP` see `robin_stocks` [documentation](https://readthedocs.org/projects/robin-stocks/downloads/pdf/latest/).
+In order to set up a one time password for `RB_OTP` see `robin_stocks` [documentation](https://robin-stocks.readthedocs.io/en/latest/quickstart.html).
 
 The specific time details, stock, and option must be specified in `config.py`.
 
